@@ -140,7 +140,7 @@ def tweet(img_filename, the_tweet):
   if img_filename:
     api.update_with_media(img_filename, status=the_tweet)
   else:
-    api.update(status=the_tweet)
+    api.update_status(status=the_tweet)
 
 
 def main(argv=sys.argv):
