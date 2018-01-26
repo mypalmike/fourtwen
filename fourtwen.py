@@ -111,8 +111,8 @@ def load_decorations():
 def decorate_city(city_tuple):
   city, country, country_code, admin1_code = city_tuple
   decorations = load_decorations()
-  if admin1_code in ['US', 'CA']:
-    return u"{} It's {} 4:20 {} in {} {} {} {} {} {} {}".format(
+  if country_code in ['US', 'CA']:
+    return u"{} It's {} 4:20 {} in {} {}, {} {} {} {}".format(
       decorations[0], decorations[1], decorations[2], decorations[3],
       city, decorations[4], admin1_code, decorations[5], country,
       decorations[6])
