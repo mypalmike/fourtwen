@@ -114,7 +114,7 @@ def decorate_city(city_tuple):
   if country_code in ['US', 'CA']:
     return u"{} It's {} 4:20 {} in {} {}, {} {} {} {}".format(
       decorations[0], decorations[1], decorations[2], decorations[3],
-      city, decorations[4], admin1_code, decorations[5], country,
+      city, admin1_code, decorations[5], country,
       decorations[6])
   else:
     return u"{} It's {} 4:20 {} in {} {} {} {} {}".format(
