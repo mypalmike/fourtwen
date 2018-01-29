@@ -70,7 +70,7 @@ def get_img_url(city, country):
   service = build('customsearch', 'v1', developerKey=google_api['key'])
   res = service.cse().list(
       searchType='image',
-      q='beautiful {} {}'.format(city, country),
+      q='scenic {} {}'.format(city, country),
       cx=google_api['engine_id'],
     ).execute()
   valid_items = [item for item in res['items'] if item['link'].rsplit('.', 1)[1] in ['jpeg', 'jpg', 'png']]
@@ -111,7 +111,7 @@ def load_decorations():
 def decorate_city(city_tuple):
   city, country, country_code, admin1_code = city_tuple
   decorations = load_decorations()
-  if country_code in ['US', 'CA']:
+  if country_code == 'US':
     return u"{} It's {} 4:20 {} in {} {}, {} {} {} {}".format(
       decorations[0], decorations[1], decorations[2], decorations[3],
       city, admin1_code, decorations[5], country,
