@@ -9,15 +9,16 @@ import csv
 from collections import defaultdict
 from datetime import datetime
 import json
+import os
 import random
 import shutil
 import sys
 
 from googleapiclient.discovery import build  
+from mastodon import Mastodon
 from pytz import timezone
 import pytz
 import requests
-import tweepy
 
 
 def random_420_zone(tznames, strict):
@@ -122,30 +123,34 @@ def decorate_city(city_tuple):
       city, decorations[4], country, decorations[6])
 
 
-def get_creds():
-  with open("creds", "r") as f:
-    return [line.strip() for line in f]
+def post(img_filename, the_post):
+  mastodon_server = os.environ["MASTODON_SERVER"]
+  client_key = os.environ["CLIENT_KEY"]
+  client_secret = os.environ["CLIENT_SECRET"]
+  access_token = os.environ["ACCESS_TOKEN"]
 
+  # Set up Mastodon
+  mastodon = Mastodon(
+    api_base_url = mastodon_server,
+    client_id = client_key,
+    client_secret = client_secret,
+    access_token = access_token,
+  )
 
-def get_auth_api():
-  consumer_key, consumer_secret, access_key, access_secret = get_creds()
-  auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
-  auth.secure = True
-  auth.set_access_token(access_key, access_secret)
-  return [auth, tweepy.API(auth)]
+  media_ids = []
+  # with open(img_filename, 'rb') as f_media:
+  #   media_dict = mastodon.media_post(f_media)
+  #   media_ids.add(media_dict['id'])  
 
+  media_dict = mastodon.media_post(img_filename)
+  media_ids.append(media_dict['id'])  
 
-def tweet(img_filename, the_tweet):
-  auth, api = get_auth_api()
-  if img_filename:
-    api.update_with_media(img_filename, status=the_tweet)
-  else:
-    api.update_status(status=the_tweet)
+  mastodon.status_post(the_post, media_ids=media_ids)
 
 
 def main(argv=sys.argv):
-  parser = argparse.ArgumentParser(description='Tweet about the time.')
-  parser.add_argument('-n', '--notweet', action='store_true', help='Generate image file, do not tweet')
+  parser = argparse.ArgumentParser(description='Post a photo about the current time.')
+  parser.add_argument('-n', '--notweet', action='store_true', help='Generate image file, do not post')
   parser.add_argument('-s', '--strict', action='store_true', help='Strict time check for 20 past the hour')
   args = parser.parse_args(argv[1:])
 
@@ -155,9 +160,9 @@ def main(argv=sys.argv):
     print(city_tuple)
     print(decorate_city(city_tuple))
   else:
-    the_tweet = decorate_city(city_tuple)
+    the_post = decorate_city(city_tuple)
     img_filename = get_image(city_tuple)
-    tweet(img_filename, the_tweet)
+    post(img_filename, the_post)
 
 
 if __name__ == '__main__':
